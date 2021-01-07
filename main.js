@@ -14,10 +14,11 @@ miro.onReady(() => {
           let stickers = selectedWidgets.filter((widget) => widget.type === 'STICKER')
 
           // Delete selected stickers
-          await for sticker in stickers {
+          for sticker in stickers {
             sticker.text = '';
           }
 
+          miro.board.widgets.update(stickers);
           /* 
           // Create shapes from selected stickers
           await miro.board.widgets.create(
@@ -33,7 +34,7 @@ miro.onReady(() => {
           */
 
           // Show success message
-          miro.showNotification('Stickers has been converted')
+          miro.showNotification('Stickers has been converted 3')
         },
       },
     },
