@@ -14,7 +14,7 @@ miro.onReady(() => {
           let stickers = selectedWidgets.filter((widget) => widget.type === 'STICKER')
 
           // Delete selected stickers
-          for sticker in stickers {
+          stickers.foreach(function(sticker, index) {
             sticker.text = '';
           }
 
