@@ -14,7 +14,9 @@ miro.onReady(() => {
           let stickers = selectedWidgets.filter((widget) => widget.type === 'STICKER')
 
           // Delete selected stickers
-          await miro.board.widgets.update(stickers.map((sticker) => sticker['text'] = ''; sticker)))
+          await for sticker in stickers {
+            sticker.text = '';
+          }
 
           /* 
           // Create shapes from selected stickers
