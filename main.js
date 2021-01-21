@@ -36,14 +36,14 @@ miro.onReady(() => {
 
         onClick: () => {
           return Promise.all(widgets.map(w => miro.board.widgets.get({ id: w.id }).then(w => w[0]))).then(widgets => {
-            return Promise.all(widgets.map => {
+            return Promise.all(widgets.map(widget => {
               metadata = widget.metadata[miro.getClientId()];
               newtxt = widget.text;
               return miro.board.widgets.update({
                 id: widget.id,
                 text: newtxt
               });
-            })
+            }))
           })
         }
       }
