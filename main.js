@@ -22,7 +22,7 @@ miro.onReady(() => {
         svgIcon: icon,
         positionPriority: 1,
         onClick: async () => {
-          miro.board.ui.openLibrary('content.html', {
+          miro.board.ui.openLibrary('https://qollin.github.io/MiroPlayground/content.html', {
             title: 'Dropper'
           })
         },
