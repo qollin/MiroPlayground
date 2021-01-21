@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <script type="text/javascript" src="https://miro.com/app/static/sdk.1.1.js"></script>
+</head>
+
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    #container {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+        padding-top: 32px;
+        box-sizing: border-box;
+    }
+    
+    .row {
+        display: flex;
+        flex-direction: row;
+        padding-left: 32px;
+        margin-bottom: 32px;
+    }
+    
+    .draggable-item {
+        margin-left: 32px;
+        margin-bottom: 32px;
+        width: 112px;
+        height: 112px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #222;
+        background-color: cornflowerblue;
+        font-size: 18px;
+        font-family: sans-serif;
+    }
+    
+    .draggable-item.red {
+        background-color: #f24726;
+    }
+    
+    .draggable-item.green {
+        background-color: #0ca788;
+    }
+    
+    .image-box img {
+        max-width: 112px;
+        max-height: 112px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div id="container">
+    </div>
+    <script>
+        const diceIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 32px; width: 32px;"><path d="M0 0h512v512H0z" fill="#000" fill-opacity="0"></path><g class="" transform="translate(0,0)" style="touch-action: none;"><path d="M74.5 36A38.5 38.5 0 0 0 36 74.5v363A38.5 38.5 0 0 0 74.5 476h363a38.5 38.5 0 0 0 38.5-38.5v-363A38.5 38.5 0 0 0 437.5 36h-363zm48.97 36.03A50 50 0 0 1 172 122a50 50 0 0 1-100 0 50 50 0 0 1 51.47-49.97zm268 0A50 50 0 0 1 440 122a50 50 0 0 1-100 0 50 50 0 0 1 51.47-49.97zM122 206a50 50 0 0 1 0 100 50 50 0 0 1 0-100zm268 0a50 50 0 0 1 0 100 50 50 0 0 1 0-100zM123.47 340.03A50 50 0 0 1 172 390a50 50 0 0 1-100 0 50 50 0 0 1 51.47-49.97zm268 0A50 50 0 0 1 440 390a50 50 0 0 1-100 0 50 50 0 0 1 51.47-49.97z" fill="#000" fill-opacity="1"></path></g></svg>'
+
+        function HSVtoRGB(h, s, v) {
+            var r, g, b, i, f, p, q, t;
+            if (arguments.length === 1) {
+                s = h.s, v = h.v, h = h.h;
+            }
+            i = Math.floor(h * 6);
+            f = h * 6 - i;
+            p = v * (1 - s);
+            q = v * (1 - f * s);
+            t = v * (1 - (1 - f) * s);
+            switch (i % 6) {
+                case 0:
+                    r = v, g = t, b = p;
+                    break;
+                case 1:
+                    r = q, g = v, b = p;
+                    break;
+                case 2:
+                    r = p, g = v, b = t;
+                    break;
+                case 3:
+                    r = p, g = q, b = v;
+                    break;
+                case 4:
+                    r = t, g = p, b = v;
+                    break;
+                case 5:
+                    r = v, g = p, b = q;
+                    break;
+            }
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+
+
+        function componentToHex(c) {
+            var hex = c.toString(16);
+            return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        function rgbToHex(rgb) {
+            return "#" + componentToHex(rgb.r) + componentToHex(rgb.g) + componentToHex(rgb.b);
+        }
+
+        const hsvToHex = (h, s, v) => rgbToHex(HSVtoRGB(h, s, v));
+
+        fonts = [
+            'ARIAL',
+            'CURSIVE',
+            'ABRIL_FATFACE',
+            'BANGERS',
+            'EB_GARAMOND',
+            'GEORGIA',
+            'GRADUATE',
+            'GRAVITAS_ONE',
+            'FREDOKA_ONE',
+            'NIXIE_ONE',
+            'OPEN_SANS',
+            'PERMANENT_MARKER',
+            'PT_SANS',
+            'PT_SANS_NARROW',
+            'PT_SERIF',
+            'RAMMETTO_ONE',
+            'ROBOTO',
+            'ROBOTO_CONDENSED',
+            'ROBOTO_SLAB',
+            'CAVEAT',
+            'TIMES_NEW_ROMAN',
+            'TITAN_ONE',
+            'LEMON_TUESDAY',
+            'ROBOTO_MONO',
+            'NOTO_SANS',
+            'PLEX_SANS',
+            'PLEX_SERIF',
+            'PLEX_MONO'
+        ]
+
+
+        const diceToShape = {
+            2: 4,
+            4: 5,
+            6: 3,
+            8: 8,
+            10: 10,
+            12: 16,
+            20: 17,
+            100: 10,
+        };
+
+        function addShapes(container) {
+            container.innerHTML += [2, 4, 6, 8, 10, 12, 20, 100].map(n => `<div data-dice-type="${n}" class="shape draggable-item">D${n}</div>`).join("\n");
+        }
+
+        class Random {
+            array = new Uint32Array(8192);
+            i = 0;
+            constructor() {
+                window.crypto.getRandomValues(this.array);
+            }
+            nextUInt() {
+                if (this.i >= this.array.length) {
+                    window.crypto.getRandomValues(this.array);
+                    this.i = 0;
+                }
+                return this.array[this.i++];
+            }
+            weightedPick(pairs) {
+                let c = pairs.reduce((acc, i) => acc + i[1], 0);
+                let r = this.nextFloat() * c;
+                for (var i = 0; i < pairs.length; i++) {
+                    const pair = pairs[i];
+                    if (pair[1] < r)
+                        r -= pair[1];
+                    else
+                        return pair[0];
+                }
+                return pairs[0][0]; // should be unreachable, if float err covers ass
+
+            }
+            next(min, max) {
+                return Math.floor(this.nextFloat() * (max - min)) + min;
+            }
+            pick(array) {
+                return array[this.next(0, array.length)];
+            }
+            nextFloat() {
+                return this.nextUInt() / 0xFFFFFFFF
+            }
+        }
+        var random = new Random();
+        const range = (n) => [...new Array(parseInt(n)).keys()]
+
+        function createShape(canvasX, canvasY, dice_type) {
+            let color1v = random.nextFloat();
+            let color2v = (color1v + .5) % 1;
+            let color1s = random.nextFloat();
+            let color2s = (color1v + .5) % 1;
+            let color1 = hsvToHex(random.nextFloat(), color1s, color1v);
+            let color2 = hsvToHex(random.nextFloat(), color2s, color2v);
+            var dice = {
+                capabilities: {
+                    editable: false
+                },
+                type: 'shape',
+                text: dice_type,
+                x: canvasX,
+                y: canvasY,
+                width: 120,
+                height: 120,
+                style: {
+                    shapeType: diceToShape[dice_type],
+                    backgroundColor: color2,
+                    backgroundOpacity: 1,
+                    bold: 0,
+                    borderColor: color1,
+                    borderOpacity: 1,
+                    borderStyle: 2,
+                    borderWidth: 8,
+                    fontFamily: random.next(0, fonts.length),
+                    fontSize: 42,
+                    highlighting: "",
+                    italic: 0,
+                    strike: 0,
+                    textAlign: "c",
+                    textAlignVertical: "m",
+                    textColor: color1,
+                    underline: 0,
+                },
+                metadata: {
+                    [miro.getClientId()]: {
+                        diceRange: makeDice(dice_type),
+                        diceType:dice_type
+                    }
+                }
+            };
+            return miro.board.widgets.create(dice)
+        }
+
+
+
+
+
+        function makeDice(dice_type) {
+
+            if (dice_type == 10 || dice_type == 100)
+                var uniform_dice_range = range(10).map(n => n * dice_type * .1);
+            else
+                var uniform_dice_range = range(dice_type).map(n => n + 1);
+            let uniform_p = 1 / uniform_dice_range.length;
+            weighted_range = uniform_dice_range.reduce((acc, n) => {
+                acc[random.pick(uniform_dice_range)] += uniform_p * .01; // increase chance by 1%
+                acc[random.pick(uniform_dice_range)] -= uniform_p * .01; // decrease chance by 1%
+                return acc;
+            }, uniform_dice_range.reduce((acc, n) => { // setup dice as uniform probability
+                acc[n] = uniform_p;
+                return acc
+            }, {}));
+            weighted_range[random.pick(uniform_dice_range)] += 1 - Object.entries(weighted_range).reduce((acc, i) => acc + i[1], 0); // ~= 0 but for numbers that don't divide on computers its not
+            return weighted_range;
+        }
+
+
+
+
+
+        function bootstrap() {
+            const container = document.getElementById('container')
+            addShapes(container)
+
+            let dice_type = 0;
+            const shapeOptions = {
+                draggableItemSelector: '.shape',
+                onClick: async(targetElement) => {
+                    dice_type = targetElement.getAttribute('data-dice-type')
+                    createShape(0, 0, dice_type);
+                },
+                getDraggableItemPreview: (targetElement) => {
+                    dice_type = targetElement.getAttribute('data-dice-type')
+                    let svg = targetElement.innerHTML;
+                    return {
+                        url: `data:image/svg+xml,${diceIcon}`
+                    }
+                },
+                onDrop: (canvasX, canvasY) => {
+                    createShape(canvasX, canvasY, dice_type)
+                }
+            }
+            miro.board.ui.initDraggableItemsContainer(container, shapeOptions)
+        }
+
+        miro.onReady(bootstrap)
+    </script>
+</body>
+
+</html>
