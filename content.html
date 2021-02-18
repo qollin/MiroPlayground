@@ -143,7 +143,9 @@ function createDie(canvasX, canvasY, color) {
 
 function bootstrap() {
   const container = document.getElementById('container')
-  container.innerHTML += '<div dice-type="designer" class="shape draggable-item" shapeType="7">D6-11</div>';
+  container.innerHTML += '<div dice-type="designer" class="shape draggable-item red">Designer</div>';
+  container.innerHTML += '<div dice-type="developer" class="shape draggable-item blue">Developer</div>';
+  container.innerHTML += '<div dice-type="tester" class="shape draggable-item green">Tester</div>';
 
   let dice_type = 0;
   const shapeOptions = {
