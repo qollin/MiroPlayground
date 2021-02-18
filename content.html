@@ -249,42 +249,81 @@
             return miro.board.widgets.create(dice)
         }
 
-
-
-
-
-        function makeDice(dice_type) {
-
-            if (dice_type == 10 || dice_type == 100)
-                var uniform_dice_range = range(10).map(n => n * dice_type * .1);
-            else
-                var uniform_dice_range = range(dice_type).map(n => n + 1);
-            let uniform_p = 1 / uniform_dice_range.length;
-            weighted_range = uniform_dice_range.reduce((acc, n) => {
-                acc[random.pick(uniform_dice_range)] += uniform_p * .01; // increase chance by 1%
-                acc[random.pick(uniform_dice_range)] -= uniform_p * .01; // decrease chance by 1%
-                return acc;
-            }, uniform_dice_range.reduce((acc, n) => { // setup dice as uniform probability
-                acc[n] = uniform_p;
-                return acc
-            }, {}));
-            weighted_range[random.pick(uniform_dice_range)] += 1 - Object.entries(weighted_range).reduce((acc, i) => acc + i[1], 0); // ~= 0 but for numbers that don't divide on computers its not
-            return weighted_range;
-        }
-
-        function bootstrap() {
-            const container = document.getElementById('container')
-            container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6</div>';
-            // container.innerHTML += [6].map(n => `<div data-dice-type="${n}" class="shape draggable-item">D${n}</div>`).join("\n");
-
-            let dice_type = 0;
-            const shapeOptions = {
-                draggableItemSelector: '.shape',
-                onClick: async(targetElement) => {
-                    dice_type = targetElement.getAttribute('data-dice-type')
-                    createShape(0, 0, dice_type);
+function createDie(canvasX, canvasY, color) {
+     
+            var dice = {
+                capabilities: {
+                    editable: false
                 },
-                getDraggableItemPreview: (targetElement) => {
+                type: 'shape',
+                text: random.next(1, 6),
+                x: canvasX,
+                y: canvasY,
+                width: 120,
+                height: 120,
+                style: {
+                    shapeType: 3,
+                    backgroundColor: color,
+                    backgroundOpacity: 1,
+                    bold: 0,
+                    borderColor: color,
+                    borderOpacity: 1,
+                    borderStyle: 2,
+                    borderWidth: 8,
+                    fontFamily: 'OPEN_SANS',
+                    fontSize: 42,
+                    highlighting: "",
+                    italic: 0,
+                    strike: 0,
+                    textAlign: "c",
+                    textAlignVertical: "m",
+                    textColor: color1,
+                    underline: 0,
+                },
+                metadata: {
+                    [miro.getClientId()]: {
+                        diceRange: makeDice(6),
+                        diceType: 6
+                    }
+                }
+            };
+}
+     
+     
+     
+     
+     
+             function makeDice(dice_type) {
+     
+                 if (dice_type == 10 || dice_type == 100)
+                     var uniform_dice_range = range(10).map(n => n * dice_type * .1);
+                 else
+                     var uniform_dice_range = range(dice_type).map(n => n + 1);
+                 let uniform_p = 1 / uniform_dice_range.length;
+                 weighted_range = uniform_dice_range.reduce((acc, n) => {
+                     acc[random.pick(uniform_dice_range)] += uniform_p * .01; // increase chance by 1%
+                     acc[random.pick(uniform_dice_range)] -= uniform_p * .01; // decrease chance by 1%
+                     return acc;
+                 }, uniform_dice_range.reduce((acc, n) => { // setup dice as uniform probability
+                     acc[n] = uniform_p;
+                     return acc
+                 }, {}));
+                 weighted_range[random.pick(uniform_dice_range)] += 1 - Object.entries(weighted_range).reduce((acc, i) => acc + i[1], 0); // ~= 0 but for numbers that don't divide on computers its not
+                 return weighted_range;
+             }
+     
+             function bootstrap() {
+                 const container = document.getElementById('container')
+                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6</div>';
+     
+                 let dice_type = 0;
+                 const shapeOptions = {
+                     draggableItemSelector: '.shape',
+                     //onClick: async(targetElement) => {
+                     //    dice_type = targetElement.getAttribute('data-dice-type')
+                     //    createShape(0, 0, dice_type);
+                 //},
+                 getDraggableItemPreview: (targetElement) => {
                     dice_type = targetElement.getAttribute('data-dice-type')
                     let svg = targetElement.innerHTML;
                     return {
@@ -292,7 +331,7 @@
                     }
                 },
                 onDrop: (canvasX, canvasY) => {
-                    createShape(canvasX, canvasY, dice_type)
+                    createDie(canvasX, canvasY, "red")
                 }
             }
             miro.board.ui.initDraggableItemsContainer(container, shapeOptions)
