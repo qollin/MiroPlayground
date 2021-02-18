@@ -250,7 +250,6 @@
         }
 
 function createDie(canvasX, canvasY, color) {
-     
             var dice = {
                 capabilities: {
                     editable: false
@@ -265,7 +264,7 @@ function createDie(canvasX, canvasY, color) {
                     shapeType: 7,
                     backgroundColor: color,
                     backgroundOpacity: 1,
-                    bold: 0,
+                    bold: 1,
                     borderColor: color,
                     borderOpacity: 1,
                     borderStyle: 2,
@@ -279,12 +278,6 @@ function createDie(canvasX, canvasY, color) {
                     textAlignVertical: "m",
                     textColor: "#000000",
                     underline: 0,
-                },
-                metadata: {
-                    [miro.getClientId()]: {
-                        diceRange: makeDice(6),
-                        diceType: 6
-                    }
                 }
             };
             return miro.board.widgets.create(dice)
@@ -315,7 +308,7 @@ function createDie(canvasX, canvasY, color) {
      
              function bootstrap() {
                  const container = document.getElementById('container')
-                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6-8</div>';
+                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6-9</div>';
      
                  let dice_type = 0;
                  const shapeOptions = {
