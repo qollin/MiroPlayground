@@ -274,7 +274,8 @@
 
         function bootstrap() {
             const container = document.getElementById('container')
-            container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6</div>');
+            // container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6</div>');
+            container.innerHTML += [6].map(n => `<div data-dice-type="${n}" class="shape draggable-item">D${n}</div>`).join("\n");
 
             let dice_type = 0;
             const shapeOptions = {
