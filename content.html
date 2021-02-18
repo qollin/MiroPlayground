@@ -249,6 +249,50 @@
             return miro.board.widgets.create(dice)
         }
 
+function createDie(canvasX, canvasY, color) {
+     
+            var dice = {
+                capabilities: {
+                    editable: false
+                },
+                type: 'shape',
+                text: "42", //'' + random.next(1, 6),
+                x: canvasX,
+                y: canvasY,
+                width: 120,
+                height: 120,
+                style: {
+                    shapeType: 3,
+                    backgroundColor: color,
+                    backgroundOpacity: 1,
+                    bold: 0,
+                    borderColor: color,
+                    borderOpacity: 1,
+                    borderStyle: 2,
+                    borderWidth: 8,
+                    fontFamily: 10, 
+                    fontSize: 42,
+                    highlighting: "",
+                    italic: 0,
+                    strike: 0,
+                    textAlign: "c",
+                    textAlignVertical: "m",
+                    textColor: "0x000000",
+                    underline: 0,
+                },
+                metadata: {
+                    [miro.getClientId()]: {
+                        diceRange: makeDice(6),
+                        diceType: 6
+                    }
+                }
+            };
+            return miro.board.widgets.create(dice)
+}
+     
+     
+     
+     
      
              function makeDice(dice_type) {
      
@@ -271,7 +315,7 @@
      
              function bootstrap() {
                  const container = document.getElementById('container')
-                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6</div>';
+                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6-2</div>';
      
                  let dice_type = 0;
                  const shapeOptions = {
@@ -288,7 +332,7 @@
                     }
                 },
                 onDrop: (canvasX, canvasY) => {
-                    createShape(canvasX, canvasY, 6)
+                    createDie(canvasX, canvasY, "red")
                 }
             }
             miro.board.ui.initDraggableItemsContainer(container, shapeOptions)
