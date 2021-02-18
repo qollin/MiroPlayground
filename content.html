@@ -143,22 +143,34 @@ function createDie(canvasX, canvasY, color) {
 
 function bootstrap() {
   const container = document.getElementById('container')
-  container.innerHTML += '<div class="shape draggable-item">D6-10</div>';
+  container.innerHTML += '<div dice-type="designer" class="shape draggable-item" shapeType="7">D6-11</div>';
 
   let dice_type = 0;
   const shapeOptions = {
     draggableItemSelector: '.shape',
     getDraggableItemPreview: (targetElement) => {
-      dice_type = targetElement.getAttribute('data-dice-type')
+      dice_type = targetElement.getAttribute('dice-type')
       let svg = targetElement.innerHTML;
       return {
         url: `data:image/svg+xml,${diceIcon}`
       }
     },
     onDrop: (canvasX, canvasY) => {
-      createDie(canvasX, canvasY, "#FF0000")
-      createDie(canvasX + 200, canvasY, "#00FF00")
-      createDie(canvasX + 400, canvasY, "#0000FF")
+      var color;
+      switch (dice_type) {
+        case "designer":
+          color = "#FF0000";
+          break;
+        case "developer":
+          color = "#0000FF";
+          break;
+        case "tester":
+          color = "#00FF00";
+          break;
+        default:
+          color = "#000000";
+      }
+      createDie(canvasX, canvasY, color)
     }
   }
   miro.board.ui.initDraggableItemsContainer(container, shapeOptions)
