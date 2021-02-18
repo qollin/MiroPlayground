@@ -272,13 +272,9 @@
             return weighted_range;
         }
 
-
-
-
-
         function bootstrap() {
             const container = document.getElementById('container')
-            addShapes(container)
+            container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6</div>');
 
             let dice_type = 0;
             const shapeOptions = {
