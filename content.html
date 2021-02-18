@@ -48,11 +48,15 @@ body {
     }
 
     .draggable-item.red {
-      background-color: #f24726;
+      background-color: #F29191;
     }
 
     .draggable-item.green {
-      background-color: #0ca788;
+      background-color: #9DE8BD;
+    }
+
+    .draggable-item.blue {
+      background-color: #2D5DFF;
     }
 
     .image-box img {
@@ -121,7 +125,7 @@ function createDie(canvasX, canvasY, color) {
     style: {
       shapeType: 7,
       backgroundColor: color,
-      backgroundOpacity: 1,
+      backgroundOpacity: 0,
       bold: 1,
       borderColor: color,
       borderOpacity: 1,
@@ -161,13 +165,13 @@ function bootstrap() {
       var color;
       switch (dice_type) {
         case "designer":
-          color = "#FF0000";
+          color = "#F29191";
           break;
         case "developer":
-          color = "#0000FF";
+          color = "#2D5DFF";
           break;
         case "tester":
-          color = "#00FF00";
+          color = "#9DE8BD";
           break;
         default:
           color = "#000000";
