@@ -256,7 +256,7 @@ function createDie(canvasX, canvasY, color) {
                     editable: false
                 },
                 type: 'shape',
-                text: '' + random.next(1, 6),
+                text: '' + random.next(1, 7),
                 x: canvasX,
                 y: canvasY,
                 width: 120,
@@ -315,7 +315,7 @@ function createDie(canvasX, canvasY, color) {
      
              function bootstrap() {
                  const container = document.getElementById('container')
-                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6-5</div>';
+                 container.innerHTML += '<div data-dice-type="6" class="shape draggable-item">D6-6</div>';
      
                  let dice_type = 0;
                  const shapeOptions = {
@@ -333,6 +333,8 @@ function createDie(canvasX, canvasY, color) {
                 },
                 onDrop: (canvasX, canvasY) => {
                     createDie(canvasX, canvasY, "#FF0000")
+                    createDie(canvasX + 200, canvasY, "#00FF00")
+                    createDie(canvasX + 400, canvasY, "#0000FF")
                 }
             }
             miro.board.ui.initDraggableItemsContainer(container, shapeOptions)
