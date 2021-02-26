@@ -48,5 +48,5 @@ miro.onReady(() => {
         }
       }
     }
-  })).catch(e => miro.showErrorNotification(e));
+  }));
 });
